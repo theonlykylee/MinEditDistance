@@ -15,23 +15,24 @@ public class MinEditDistance {
 		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
 		System.out.println(":: STRING SUBSTITUTION USING MINIMUM EDIT DISTANCE ::");
 		System.out.print("   > Enter FIRST string: ");
-		
 		firstString = s.next();
-		
 		System.out.print("   > Enter SECOND string: ");
-		
 		secondString = s.next();
 		
 		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
 
 		minEdDisTable = createMEDTable(firstString, secondString);
+		
+		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
 		System.out.println(":: MINIMUM EDIT DISTANCE: " + getMinEditDistance(minEdDisTable));
 		printAlignment(generateBacktrace(minEdDisTable), firstString, secondString);
 	}
 	
 	public static int[][] createMEDTable(String first, String second) {
 		int firstSize = first.length() + 1;
+		System.out.println("[LOG] : " + firstSize);
 		int secondSize = second.length() + 1;
+		System.out.println("[LOG] : " + secondSize);
 		
 		char[] fStr = first.toCharArray();
 		char[] sStr = second.toCharArray();
@@ -92,6 +93,11 @@ public class MinEditDistance {
 			int up = medTable[i - 1][j];
 			int diag = medTable[i - 1][j - 1];
 			
+			System.out.print("[LOG] : curr="+curr+"("+i+","+j+"); ");
+			System.out.print("left="+left+"("+i+","+(j-1)+"); ");
+			System.out.print("up="+up+"("+(i-1)+","+j+"); ");
+			System.out.println("diag="+diag+"("+(i-1)+","+(j-1)+"); ");
+			
 			if("DIAGONAL".equalsIgnoreCase(getMinAction(left, up, diag))) {
 				if(curr == diag)
 					action += "ALIGN";
@@ -116,6 +122,8 @@ public class MinEditDistance {
 			bTrace.add(action);
 		}
 		
+		System.out.println("[LOG] : Backtrace Size = " + bTrace.size());
+		
 		Collections.reverse(bTrace);
 		
 		return bTrace;
@@ -139,20 +147,46 @@ public class MinEditDistance {
 		char[] fArray = first.toCharArray();
 		char[] sArray = second.toCharArray();
 		
+		String[] act;
+		int fIndex;
+		int sIndex;
+		String action;
+		
+		int fPast = 0;
+		int sPast = 0;
+		
+		String firstFinal = "   > F: -> ";
+		String actionFinal = "   > A: -> ";
+		String secondFinal = "   > S: -> ";
+		
 		for(String bt : backTrace) {
-			String[] act = bt.split("/");
+			act = bt.split("/");
+			fIndex = Integer.parseInt(act[0]) - 1;
+			sIndex = Integer.parseInt(act[1]) - 1;
+			action = act[2];
 			
-			System.out.print(fArray[Integer.parseInt(act[0]) - 1]);
-			
-			if(act[2].equalsIgnoreCase("align"))
-				System.out.print(" -- ");
+			if(fPast == fArray[fIndex])
+				firstFinal += "*  ";
 			else
-				System.out.print("    ");
+				firstFinal += fArray[fIndex] + "  ";
 			
-			System.out.print(sArray[Integer.parseInt(act[1]) - 1]);
+			if(action.equalsIgnoreCase("align"))
+				actionFinal += "|  ";
+			else
+				actionFinal += "   ";
 			
-			System.out.println();
+			if(sPast == sArray[sIndex])
+				secondFinal += "*  ";
+			else
+				secondFinal += sArray[sIndex] + "  ";
+			
+			fPast = fArray[fIndex];
+			sPast = sArray[sIndex];
 		}
+		
+		System.out.println(firstFinal);
+		System.out.println(actionFinal);
+		System.out.println(secondFinal);
 	}
 
 }
