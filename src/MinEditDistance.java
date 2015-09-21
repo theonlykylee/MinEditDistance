@@ -17,9 +17,9 @@ public class MinEditDistance {
 		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
 		System.out.println(":: STRING SUBSTITUTION USING MINIMUM EDIT DISTANCE ::");
 		System.out.print("   > Enter FIRST string: ");
-		firstString = s.next();
+		firstString = s.nextLine();
 		System.out.print("   > Enter SECOND string: ");
-		secondString = s.next();
+		secondString = s.nextLine();
 		
 		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
 
