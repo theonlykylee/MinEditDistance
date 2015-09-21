@@ -34,9 +34,7 @@ public class MinEditDistance {
 	
 	public static int[][] createMEDTable(String first, String second) {
 		int firstSize = first.length() + 1;
-		System.out.println("[LOG] : " + firstSize);
 		int secondSize = second.length() + 1;
-		System.out.println("[LOG] : " + secondSize);
 		
 		char[] fStr = first.toCharArray();
 		char[] sStr = second.toCharArray();
@@ -87,8 +85,6 @@ public class MinEditDistance {
 		int i = medTable.length - 1;
 		int j = medTable[0].length - 1;
 		
-		String action = "";
-		
 		int left;
 		int up;
 		int diag;
@@ -97,7 +93,7 @@ public class MinEditDistance {
 		
 		while(flag) {
 			bTrace.add(i + "/" + j + "/");
-			System.out.println("[LOG] : " + i + "/" + j + "/" + action);
+			//System.out.println("[LOG] : " + i + "/" + j + "/" + action);
 			
 			if(i == 1 && j == 1) {
 				flag = false;
@@ -135,30 +131,18 @@ public class MinEditDistance {
 //			System.out.println("diag="+diag+"("+(i-1)+","+(j-1)+"); ");
 //			
 //			if("DIAGONAL".equalsIgnoreCase(getMinAction(left, up, diag))) {
-//				if(curr == diag)
-//					action += "ALIGN";
-//				else
-//					action += "SUBSTITUTE";
 //				i--;
 //				j--;
 //			} else if("UP".equalsIgnoreCase(getMinAction(left, up, diag))) {
-//				if(curr == up)
-//					action += "ALIGN";
-//				else
-//					action += "DELETE";
 //				i--;
 //			} else {
-//				if(curr == left)
-//					action += "ALIGN";
-//				else
-//					action += "INSERT";
 //				j--;
 //			}
 //			
 //			bTrace.add(action);
 //		}
 		
-		System.out.println("[LOG] : Backtrace Size = " + bTrace.size());
+		//System.out.println("[LOG] : Backtrace Size = " + bTrace.size());
 		
 		Collections.reverse(bTrace);
 		
