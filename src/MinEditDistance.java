@@ -9,6 +9,8 @@ public class MinEditDistance {
 		String firstString;
 		String secondString;
 		int[][] minEdDisTable;
+		int minEdDisVal;
+		ArrayList<String> minEdBacktrace;
 		
 		Scanner s = new Scanner(System.in);
 		
@@ -22,10 +24,12 @@ public class MinEditDistance {
 		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
 
 		minEdDisTable = createMEDTable(firstString, secondString);
+		minEdDisVal = getMinEditDistance(minEdDisTable);
+		minEdBacktrace = generateBacktrace(minEdDisTable);
 		
 		System.out.println("===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===-===");
-		System.out.println(":: MINIMUM EDIT DISTANCE: " + getMinEditDistance(minEdDisTable));
-		printAlignment(generateBacktrace(minEdDisTable), firstString, secondString);
+		System.out.println(":: MINIMUM EDIT DISTANCE: " + minEdDisVal);
+		printAlignment(verifyAction(minEdBacktrace, minEdDisTable), firstString, secondString);
 	}
 	
 	public static int[][] createMEDTable(String first, String second) {
@@ -85,20 +89,14 @@ public class MinEditDistance {
 		
 		String action = "";
 		
-		int left = medTable[i][j - 1];
-		int up = medTable[i - 1][j];
-		int diag = medTable[i - 1][j - 1];
-		int curr = medTable[i][j];
+		int left;
+		int up;
+		int diag;
 		
 		boolean flag = true;
 		
-		if((curr != left) && (curr != diag) && (curr != up))
-			action = "SUBSTITUTE";
-		else
-			action = "ALIGN";
-		
 		while(flag) {
-			bTrace.add(i + "/" + j + "/" + action);
+			bTrace.add(i + "/" + j + "/");
 			System.out.println("[LOG] : " + i + "/" + j + "/" + action);
 			
 			if(i == 1 && j == 1) {
@@ -113,23 +111,11 @@ public class MinEditDistance {
 				diag = medTable[i - 1][j - 1];
 				
                 if(up < diag) {
-                	if(curr == up)
-            			action = "ALIGN";
-            		else
-            			action = "DELETE";
                     i--;
                 } else if(left < diag) {
-                	if(curr == left)
-            			action = "ALIGN";
-            		else
-            			action = "INSERT";
                     j--;
                 } else {
-                	if(curr == diag)
-            			action = "ALIGN";
-            		else
-            			action = "SUBSTITUTE";
-                    i--;
+                	i--;
                     j--;
                 }
             }
@@ -179,19 +165,40 @@ public class MinEditDistance {
 		return bTrace;
 	}
 	
-//	public static String getMinAction(int left, int up, int diag) {
-//		if(left > up) {
-//			if(up > diag)
-//				return "DIAGONAL";
-//			else
-//				return "UP";
-//		} else {
-//			if(left > diag)
-//				return "DIAGONAL";
-//			else
-//				return "LEFT";
-//		}
-//	}
+	public static ArrayList<String> verifyAction(ArrayList<String> bTrace, int[][] medTable) {
+		int[] currIndex = new int[2];
+		int[] pastIndex = {0,0};
+		String[] act;
+		
+		ArrayList<String> newBT = new ArrayList<String>();
+		String nBT;
+		
+		for(String bT : bTrace) {
+			nBT = bT;
+			act = bT.split("/");
+			currIndex[0] = Integer.parseInt(act[0]);
+			currIndex[1] = Integer.parseInt(act[1]);
+			
+			if(medTable[pastIndex[0]][pastIndex[1]] == medTable[currIndex[0]][currIndex[1]]) {
+				nBT += "ALIGN";
+			} else {
+				if((pastIndex[0] == currIndex[0]) && (pastIndex[1] == currIndex[1] - 1)) {
+					nBT += "INSERT";
+				} else if((pastIndex[0] == currIndex[0] - 1) && (pastIndex[1] == currIndex[1])) {
+					nBT += "DELETE";
+				} else {
+					nBT += "SUBSTITUTE";
+				}
+			}
+			
+			newBT.add(nBT);
+			
+			pastIndex[0] = currIndex[0];
+			pastIndex[1] = currIndex[1];
+		}
+	
+		return newBT;	
+	}
 	
 	public static void printAlignment(ArrayList<String> backTrace, String first, String second) {
 		char[] fArray = first.toCharArray();
@@ -201,9 +208,6 @@ public class MinEditDistance {
 		int fIndex;
 		int sIndex;
 		String action;
-		
-//		int fPast = 0;
-//		int sPast = 0;
 		
 		String firstFinal = "   > F: -> ";
 		String actionFinal = "   > A: -> ";
@@ -232,24 +236,6 @@ public class MinEditDistance {
 				secondFinal += sArray[sIndex] + "  ";
 				actionFinal += "   ";
 			}
-			
-//			if(fPast == fArray[fIndex])
-//				firstFinal += "*  ";
-//			else
-//				firstFinal += fArray[fIndex] + "  ";
-//			
-//			if(action.equalsIgnoreCase("align"))
-//				actionFinal += "|  ";
-//			else
-//				actionFinal += "   ";
-//			
-//			if(sPast == sArray[sIndex])
-//				secondFinal += "*  ";
-//			else
-//				secondFinal += sArray[sIndex] + "  ";
-//			
-//			fPast = fArray[fIndex];
-//			sPast = sArray[sIndex];
 		}
 		
 		System.out.println(firstFinal);
